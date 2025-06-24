@@ -16,11 +16,9 @@ public class UserController
 // Đây là lớp dùng để xử lý các yêu cầu HTTP liên quan đến người dùng
 {
 
-    private UserService userService; 
-    // // Đây là một biến thành viên của lớp, 
-    // dùng để lưu trữ đối tượng UserService, 
-    // giúp xử lý logic nghiệp vụ liên quan đến người dùng
-
+    private final UserService userService; 
+    // Đây là một biến thành viên của lớp, dùng để lưu trữ đối tượng UserRepository,
+    // giúp xử lý các thao tác liên quan đến dữ liệu người dùng
     public UserController(UserService userService) // Constructor của lớp,
     {
         this.userService = userService; // Gán đối tượng UserService vào biến thành viên
@@ -30,8 +28,7 @@ public class UserController
     // Method này sẽ trả về tên của trang HTML sẽ được hiển thị khi người dùng truy cập vào đường dẫn gốc
     public String getHomePage(Model model) // Method này dùng để xử lý yêu cầu HTTP đến đường dẫn gốc
     {
-        String test = this.userService.handleHello();
-        model.addAttribute("eric", test);
+        model.addAttribute("eric", "test");
         return "hello"; // Trả về tên của trang HTML sẽ được hiển thị,
     }
 
@@ -46,6 +43,7 @@ public class UserController
     @RequestMapping(value = "/admin/user/create1", method = RequestMethod.POST)
     public String createUserPage(Model model, @ModelAttribute("newUser") User hoibaoUser) {
         System.out.println("Run here"+ hoibaoUser);
+        this.userService.handleSaveUser(hoibaoUser);
         return "hello";
     }
 }
