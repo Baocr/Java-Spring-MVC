@@ -1,8 +1,11 @@
 package vn.hoidanit.laptopshop.controller;
 
+import java.util.List;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -28,23 +31,43 @@ public class UserController
     // Method này sẽ trả về tên của trang HTML sẽ được hiển thị khi người dùng truy cập vào đường dẫn gốc
     public String getHomePage(Model model) // Method này dùng để xử lý yêu cầu HTTP đến đường dẫn gốc
     {
+        List<User> arrUsers = this.userService.getAllUsersByEmail("1@gmail.com"); // Gọi phương thức getAllUsers từ UserService để lấy danh sách người dùng
+        System.out.println(arrUsers);
         model.addAttribute("eric", "test");
         return "hello"; // Trả về tên của trang HTML sẽ được hiển thị,
     }
 
-    @RequestMapping("/admin/user") // Annotation này đánh dấu method này sẽ xử lý các yêu cầu HTTP đến đường dẫn "/user"
-    public String userPage(Model model) // Method này dùng để xử lý yêu cầu HTTP đến đường dẫn gốc
+    @RequestMapping("/admin/user") 
+    public String getUserPage(Model model) // Method này dùng để xử lý yêu cầu HTTP đến đường dẫn "/user"
+    {
+        List<User> users = this.userService.getAllUsers();
+        model.addAttribute("users1", users);
+        return "/admin/user/table-user"; // Trả về tên của trang HTML sẽ được hiển thị
+    }
+
+    @RequestMapping("/admin/user/{id}") 
+    public String getUserDetailPage(Model model, @PathVariable long id) // Method này dùng để xử lý yêu cầu HTTP đến đường dẫn "/user"
+    {
+        System.out.println("id: " + id);
+        model.addAttribute("id", id);
+        return "/admin/user/show"; // Trả về tên của trang HTML sẽ được hiển thị
+    }
+
+
+
+    @RequestMapping("/admin/user/create") // Annotation này đánh dấu method này sẽ xử lý các yêu cầu HTTP đến đường dẫn "/user"
+    public String getCreateUserPage(Model model) // Method này dùng để xử lý yêu cầu HTTP đến đường dẫn gốc
     {
         model.addAttribute("newUser", new User());
         return "/admin/user/create";
     }
 
 
-    @RequestMapping(value = "/admin/user/create1", method = RequestMethod.POST)
+    @RequestMapping(value = "/admin/user/create", method = RequestMethod.POST)
     public String createUserPage(Model model, @ModelAttribute("newUser") User hoibaoUser) {
-        System.out.println("Run here"+ hoibaoUser);
+        
         this.userService.handleSaveUser(hoibaoUser);
-        return "hello";
+        return "redirect:/admin/user"; // Trả về tên của trang HTML sẽ được hiển thị
     }
 }
     
